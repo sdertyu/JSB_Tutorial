@@ -19,8 +19,8 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/users")
-    ApiResponse<User> createUser(@RequestBody @Valid UserCreate request) {
-        ApiResponse<User> response = new ApiResponse<>();
+    ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreate request) {
+        ApiResponse<UserResponse> response = new ApiResponse<>();
         response.setData(userService.createUser(request));
         return response;
     }

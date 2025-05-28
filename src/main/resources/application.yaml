@@ -7,8 +7,11 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/java
     username: root
-    password:
+  password:
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+jwt:
+  signerKey: "ppx6uwkGL9K3cYxe716WVYGJSdMnn0bq/iiMSGcC4aJ4R5gc/b5tvG1yZmQfW5iK"

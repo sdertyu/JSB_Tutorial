@@ -11,6 +11,7 @@ import com.pngo.crudProj.dto.request.IntrospectRequest;
 import com.pngo.crudProj.dto.response.AuthenicationResponse;
 import com.pngo.crudProj.dto.response.IntrospectResponse;
 import com.pngo.crudProj.dto.response.UserResponse;
+import com.pngo.crudProj.entities.User;
 import com.pngo.crudProj.exception.AppException;
 import com.pngo.crudProj.exception.ErrorCode;
 import com.pngo.crudProj.repository.UserRepository;
@@ -24,12 +25,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @Slf4j
 @Service
@@ -52,7 +55,7 @@ public class AuthenicationService {
         if (!authenicated)
             throw new AppException(ErrorCode.UNAUTHENICATION);
 
-        String token = generateToken(request.getUsername());
+        String token = generateToken(user);
 
         return AuthenicationResponse.builder()
                 .token(token)
@@ -61,16 +64,16 @@ public class AuthenicationService {
 
     }
 
-    private String generateToken(String username) {
+    private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .subject(username)
+                .subject(user.getUsername())
                 .issuer("crudProj")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("customClaim", "Custom")
+                .claim("scope", buildScope(user))
                 .build();
 
         Payload payload = new Payload(claimsSet.toJSONObject());
@@ -98,6 +101,15 @@ public class AuthenicationService {
                 .valid(check && expirationTime.after(new Date()))
                 .build();
 
+    }
+
+    private String buildScope(User user) {
+        StringJoiner joiner = new StringJoiner(" ");
+        if(!CollectionUtils.isEmpty(user.getRoles()))
+        {
+            user.getRoles().forEach(joiner::add);
+        }
+        return joiner.toString();
     }
 
 

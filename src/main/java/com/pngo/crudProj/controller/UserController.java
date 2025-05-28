@@ -7,11 +7,14 @@ import com.pngo.crudProj.dto.response.UserResponse;
 import com.pngo.crudProj.entities.User;
 import com.pngo.crudProj.services.UserService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 public class UserController {
 
@@ -27,6 +30,8 @@ public class UserController {
 
     @GetMapping("/users")
     public List<User> getUsers() {
+        var authenication = SecurityContextHolder.getContext().getAuthentication();
+        log.warn(authenication.getName());
         return userService.getUsers();
     }
 

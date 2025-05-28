@@ -4,6 +4,7 @@ import com.pngo.crudProj.dto.request.UserCreate;
 import com.pngo.crudProj.dto.request.UserUpdate;
 import com.pngo.crudProj.dto.response.UserResponse;
 import com.pngo.crudProj.entities.User;
+import com.pngo.crudProj.enums.Role;
 import com.pngo.crudProj.exception.AppException;
 import com.pngo.crudProj.exception.ErrorCode;
 import com.pngo.crudProj.mapper.UserMapper;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -26,6 +28,8 @@ public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
 
+    PasswordEncoder passwordEncoder;
+
     public UserResponse createUser(UserCreate request) {
 //        User user = new User();
 
@@ -35,16 +39,22 @@ public class UserService {
         }
 
         User user = userMapper.toUser(request);
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+//        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        UserCreate userCreate = UserCreate.builder()
-                .username(request.getUsername())
-                .password(request.getPassword())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .birthDate(request.getBirthDate())
-                .build();
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+
+
+        user.setRoles(roles);
+
+//        UserCreate userCreate = UserCreate.builder()
+//                .username(request.getUsername())
+//                .password(request.getPassword())
+//                .firstName(request.getFirstName())
+//                .lastName(request.getLastName())
+//                .birthDate(request.getBirthDate())
+//                .build();
 
 //        user.setFirstName(request.getFirstName());
 //        user.setLastName(request.getLastName());

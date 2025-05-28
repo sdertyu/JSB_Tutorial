@@ -8,18 +8,21 @@ import com.pngo.crudProj.exception.AppException;
 import com.pngo.crudProj.exception.ErrorCode;
 import com.pngo.crudProj.mapper.UserMapper;
 import com.pngo.crudProj.repository.UserRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private UserMapper userMapper;
+    UserRepository userRepository;
+    UserMapper userMapper;
 
     public User createUser(UserCreate request) {
 //        User user = new User();
